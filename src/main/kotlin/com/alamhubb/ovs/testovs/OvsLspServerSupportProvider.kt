@@ -21,7 +21,7 @@ private class FooLspServerDescriptor(project: Project) : ProjectWideLspServerDes
     override fun createCommandLine(): GeneralCommandLine {
         val path = System.getenv("PATH")
         println("Current PATH: $path")
-        return GeneralCommandLine("cmd.exe", "/k", "npm", "exec", "ovs-lsp", "--stdio").apply {
+        return GeneralCommandLine("tsx.cmd", "E:/qkyproject/ovsall/ovs-language-server/src/index.js", "--stdio").apply {
             withCharset(Charsets.UTF_8)
             withRedirectErrorStream(true)
         }
