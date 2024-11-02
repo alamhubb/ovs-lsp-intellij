@@ -1,6 +1,8 @@
 package com.alamhubb.ovs.testovs
 
 import com.intellij.execution.configurations.GeneralCommandLine
+import com.intellij.openapi.editor.DefaultLanguageHighlighterColors
+import com.intellij.openapi.editor.colors.EditorColorsManager
 import com.intellij.openapi.editor.colors.TextAttributesKey
 import com.intellij.openapi.editor.markup.TextAttributes
 import com.intellij.openapi.project.Project
@@ -48,10 +50,18 @@ private class FooLspServerDescriptor(project: Project) : ProjectWideLspServerDes
             tokenType: String,
             modifiers: List<String>
         ): TextAttributesKey {
+
+            val getCurrentScheme = EditorColorsManager.getInstance().globalScheme
+
+            val colors = getCurrentScheme.getAttributes(DefaultLanguageHighlighterColors .KEYWORD)
+
+            println(colors)
+
             println("触发了tokentype:$tokenType")
             val color = Color(0, 255, 0)
 //            java.awt.Color[r=188,g=190,b=196]
-            return TextAttributesKey.createTextAttributesKey(
+            return DefaultLanguageHighlighterColors.KEYWORD
+            /*return TextAttributesKey.createTextAttributesKey(
                 "CUSTOM.GREEN_TOKEN",  // 唯一的键名
                 TextAttributes().apply {
                     val ab = 123
@@ -62,7 +72,7 @@ private class FooLspServerDescriptor(project: Project) : ProjectWideLspServerDes
                     foregroundColor = color
                     fontType = Font.BOLD
                 }
-            )
+            )*/
         }
     }
 }
