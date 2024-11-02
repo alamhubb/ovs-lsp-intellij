@@ -49,7 +49,7 @@ private class FooLspServerDescriptor(project: Project) : ProjectWideLspServerDes
             modifiers: List<String>
         ): TextAttributesKey {
             println("触发了tokentype:$tokenType")
-            val color = Color(188, 190, 196)
+            val color = Color(0, 255, 0)
 //            java.awt.Color[r=188,g=190,b=196]
             return TextAttributesKey.createTextAttributesKey(
                 "CUSTOM.GREEN_TOKEN",  // 唯一的键名
@@ -57,8 +57,9 @@ private class FooLspServerDescriptor(project: Project) : ProjectWideLspServerDes
                     val ab = 123
                     println(ab)
                     println(color)
-                    foregroundColor = Color.green
-//                    foregroundColor = color
+                    println(Color.red)
+//                    foregroundColor = Color.red
+                    foregroundColor = color
                     fontType = Font.BOLD
                 }
             )
