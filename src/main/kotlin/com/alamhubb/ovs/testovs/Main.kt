@@ -7,11 +7,16 @@ fun main() {
     val isRunning = AtomicBoolean(true)
 
     // 创建子进程，使用 npm exec
-    val commandLine = GeneralCommandLine("cmd.exe", "/k", "npm", "exec", "ovs-lsp", "--stdio").apply {
-        withParentEnvironmentType(GeneralCommandLine.ParentEnvironmentType.CONSOLE)
-        withCharset(Charsets.UTF_8)
-        withRedirectErrorStream(true)
-    }
+//    val commandLine = GeneralCommandLine("cmd.exe", "/k", "npm", "exec", "ovs-lsp", "--stdio")
+
+
+//    val commandLine = GeneralCommandLine("zsh", "-i", "-c", "npm exec ovs-lsp --stdio")
+    val commandLine = GeneralCommandLine("tsx", "/Users/qinky/webstormspro/ovs-lsp/src/index.js", "--stdio")
+        .apply {
+            withParentEnvironmentType(GeneralCommandLine.ParentEnvironmentType.CONSOLE)
+            withCharset(Charsets.UTF_8)
+            withRedirectErrorStream(true)
+        }
 
     println("Starting process: ${commandLine.commandLineString}")
 
