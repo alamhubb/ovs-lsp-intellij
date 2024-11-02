@@ -1,15 +1,16 @@
 package com.alamhubb.ovs.testovs
 
 import com.intellij.execution.configurations.GeneralCommandLine
-import com.intellij.openapi.editor.DefaultLanguageHighlighterColors
 import com.intellij.openapi.editor.colors.TextAttributesKey
+import com.intellij.openapi.editor.markup.TextAttributes
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.platform.lsp.api.LspServerSupportProvider
 import com.intellij.platform.lsp.api.LspServerSupportProvider.LspServerStarter
 import com.intellij.platform.lsp.api.ProjectWideLspServerDescriptor
 import com.intellij.platform.lsp.api.customization.LspSemanticTokensSupport
-import org.eclipse.lsp4j.SemanticTokensLegend
+import java.awt.Color
+import java.awt.Font
 
 class OvsLspServerSupportProvider : LspServerSupportProvider {
     override fun fileOpened(project: Project, file: VirtualFile, serverStarter: LspServerStarter) {
@@ -48,7 +49,15 @@ private class FooLspServerDescriptor(project: Project) : ProjectWideLspServerDes
             modifiers: List<String>
         ): TextAttributesKey {
             println("触发了tokentype:$tokenType")
-            return DefaultLanguageHighlighterColors.CLASS_NAME
+            return TextAttributesKey.createTextAttributesKey(
+                "CUSTOM.GREEN_TOKEN",  // 唯一的键名
+                TextAttributes().apply {
+                    val ab = 123
+                    println(ab)
+                    foregroundColor = Color.GREEN
+                    fontType = Font.BOLD
+                }
+            )
         }
     }
 }
