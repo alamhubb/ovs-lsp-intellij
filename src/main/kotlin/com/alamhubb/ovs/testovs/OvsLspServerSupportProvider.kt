@@ -1,11 +1,15 @@
 package com.alamhubb.ovs.testovs
 
 import com.intellij.execution.configurations.GeneralCommandLine
+import com.intellij.openapi.editor.DefaultLanguageHighlighterColors
+import com.intellij.openapi.editor.colors.TextAttributesKey
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.platform.lsp.api.LspServerSupportProvider
 import com.intellij.platform.lsp.api.LspServerSupportProvider.LspServerStarter
 import com.intellij.platform.lsp.api.ProjectWideLspServerDescriptor
+import com.intellij.platform.lsp.api.customization.LspSemanticTokensSupport
+import org.eclipse.lsp4j.SemanticTokensLegend
 
 class OvsLspServerSupportProvider : LspServerSupportProvider {
     override fun fileOpened(project: Project, file: VirtualFile, serverStarter: LspServerStarter) {
@@ -22,13 +26,30 @@ private class FooLspServerDescriptor(project: Project) : ProjectWideLspServerDes
         val path = System.getenv("PATH")
         println("Current PATH: $path")
 //        return GeneralCommandLine("tsx.cmd", "E:/qkyproject/ovsall/ovs-language-server/src/index.ts", "--stdio")
-        return  GeneralCommandLine("tsx", "/Users/qinky/webstormspro/ovs-lsp/src/index.ts", "--stdio")
-//        return GeneralCommandLine("tsx.cmd", "D:/project/qkyproject/ovs-lsp/src/index.ts", "--stdio")
+//        return  GeneralCommandLine("tsx", "/Users/qinky/webstormspro/ovs-lsp/src/index.ts", "--stdio")
+        return GeneralCommandLine("tsx.cmd", "D:/project/qkyproject/ovs-lsp/src/index.ts", "--stdio")
             .apply {
                 withCharset(Charsets.UTF_8)
                 withRedirectErrorStream(true)
             }
 //        return GeneralCommandLine("node", "console.log(123)", "ovs-lsp", "echo", "--stdio")
+    }
+
+    // 提供语义标记支持实例
+    override val lspSemanticTokensSupport: LspSemanticTokensSupport = object : LspSemanticTokensSupport() {
+        override val tokenTypes = listOf(
+            "class"
+        )
+
+        override val tokenModifiers = listOf<String>()
+
+        override fun getTextAttributesKey(
+            tokenType: String,
+            modifiers: List<String>
+        ): TextAttributesKey {
+            println("触发了tokentype:$tokenType")
+            return DefaultLanguageHighlighterColors.CLASS_NAME
+        }
     }
 }
 

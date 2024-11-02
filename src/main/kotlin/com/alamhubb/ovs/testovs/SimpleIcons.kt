@@ -5,5 +5,5 @@ import javax.swing.Icon
 
 object SimpleIcons {
     //  public static final Icon FILE = IconLoader.getIcon("/icons/ovs.png", com.alamhubb.ovs.testovs.SimpleIcons.class);
-    val FILE: Icon = getIcon("/icons/jar-gray.png", SimpleIcons::class.java)
+    val FILE: Icon = getIcon("/icons/ovs.png", SimpleIcons::class.java)
 }
