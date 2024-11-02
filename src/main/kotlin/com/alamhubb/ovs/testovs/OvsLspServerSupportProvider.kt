@@ -1,8 +1,6 @@
 package com.alamhubb.ovs.testovs
 
 import com.intellij.execution.configurations.GeneralCommandLine
-import com.intellij.openapi.editor.DefaultLanguageHighlighterColors
-import com.intellij.openapi.editor.colors.EditorColorsManager
 import com.intellij.openapi.editor.colors.TextAttributesKey
 import com.intellij.openapi.editor.markup.TextAttributes
 import com.intellij.openapi.project.Project
@@ -11,6 +9,8 @@ import com.intellij.platform.lsp.api.LspServerSupportProvider
 import com.intellij.platform.lsp.api.LspServerSupportProvider.LspServerStarter
 import com.intellij.platform.lsp.api.ProjectWideLspServerDescriptor
 import com.intellij.platform.lsp.api.customization.LspSemanticTokensSupport
+import java.awt.Color
+import java.awt.Font
 
 class OvsLspServerSupportProvider : LspServerSupportProvider {
     override fun fileOpened(project: Project, file: VirtualFile, serverStarter: LspServerStarter) {
@@ -48,18 +48,20 @@ private class FooLspServerDescriptor(project: Project) : ProjectWideLspServerDes
             tokenType: String,
             modifiers: List<String>
         ): TextAttributesKey {
-
-            // 获取当前的颜色方案
-            fun getCurrentScheme() = EditorColorsManager.getInstance().globalScheme
-
-            // 创建带有实际颜色的 TextAttributesKey
-            val classStyle = TextAttributesKey.createTextAttributesKey(
-                "CUSTOM.CLASS",
-                getCurrentScheme().getAttributes(DefaultLanguageHighlighterColors.CLASS_NAME)
-            )
             println("触发了tokentype:$tokenType")
-            println(classStyle)
-            return classStyle
+            val color = Color(188, 190, 196)
+//            java.awt.Color[r=188,g=190,b=196]
+            return TextAttributesKey.createTextAttributesKey(
+                "CUSTOM.GREEN_TOKEN",  // 唯一的键名
+                TextAttributes().apply {
+                    val ab = 123
+                    println(ab)
+                    println(color)
+                    foregroundColor = Color.green
+//                    foregroundColor = color
+                    fontType = Font.BOLD
+                }
+            )
         }
     }
 }
