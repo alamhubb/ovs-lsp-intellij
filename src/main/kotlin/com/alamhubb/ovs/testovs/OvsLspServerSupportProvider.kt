@@ -29,8 +29,8 @@ private class FooLspServerDescriptor(project: Project) : ProjectWideLspServerDes
         val path = System.getenv("PATH")
         println("Current PATH: $path")
 //        return GeneralCommandLine("tsx.cmd", "E:/qkyproject/ovsall/ovs-language-server/src/index.ts", "--stdio")
-//        return  GeneralCommandLine("tsx", "/Users/qinky/webstormspro/ovs-lsp/src/index.ts", "--stdio")
-        return GeneralCommandLine("tsx.cmd", "D:/project/qkyproject/ovs-lsp/src/index.ts", "--stdio")
+        return GeneralCommandLine("tsx", "/Users/qinky/WebstormProjects/subhutiall/ovs-lsp/src/index.ts", "--stdio")
+//        return GeneralCommandLine("tsx.cmd", "D:/project/qkyproject/ovs-lsp/src/index.ts", "--stdio")
             .apply {
                 withCharset(Charsets.UTF_8)
                 withRedirectErrorStream(true)
@@ -41,7 +41,8 @@ private class FooLspServerDescriptor(project: Project) : ProjectWideLspServerDes
     // 提供语义标记支持实例
     override val lspSemanticTokensSupport: LspSemanticTokensSupport = object : LspSemanticTokensSupport() {
         override val tokenTypes = listOf(
-            "class"
+            "KEYWORD",
+            "IDENTIFIER",
         )
 
         override val tokenModifiers = listOf<String>()
@@ -53,28 +54,45 @@ private class FooLspServerDescriptor(project: Project) : ProjectWideLspServerDes
 
             val getCurrentScheme = EditorColorsManager.getInstance().globalScheme
 
-            val colors = getCurrentScheme.getAttributes(DefaultLanguageHighlighterColors .KEYWORD)
+            val colors = getCurrentScheme.getAttributes(DefaultLanguageHighlighterColors.KEYWORD)
 
             println(colors)
 
+            val res = when (tokenType) {
+                "KEYWORD" -> DefaultLanguageHighlighterColors.KEYWORD
+                "IDENTIFIER" -> DefaultLanguageHighlighterColors.IDENTIFIER
+                else -> DefaultLanguageHighlighterColors.KEYWORD
+            }
             println("触发了tokentype:$tokenType")
-            val color = Color(0, 255, 0)
-//            java.awt.Color[r=188,g=190,b=196]
-            return DefaultLanguageHighlighterColors.KEYWORD
+            return res
+
             /*return TextAttributesKey.createTextAttributesKey(
                 "CUSTOM.GREEN_TOKEN",  // 唯一的键名
                 TextAttributes().apply {
                     val ab = 123
                     println(ab)
-                    println(color)
-                    println(Color.red)
-//                    foregroundColor = Color.red
-                    foregroundColor = color
+                    foregroundColor = Color.red
                     fontType = Font.BOLD
                 }
             )*/
         }
     }
+
+    /*override fun isSupportedFile(file: VirtualFile) = file.extension == "simple"
+
+    override fun createCommandLine(): GeneralCommandLine {
+        return GeneralCommandLine("tsx", getServerPath())
+            .apply {
+                withCharset(Charsets.UTF_8)
+                withRedirectErrorStream(true)
+                addParameter("--stdio")
+            }
+    }
+
+    private fun getServerPath(): String {
+        // 使用编译后的 JavaScript 文件而不是 TypeScript 文件
+        return "/Users/qinky/webstormspro/ovs-lsp/src/index.ts"
+    }*/
 }
 
 
