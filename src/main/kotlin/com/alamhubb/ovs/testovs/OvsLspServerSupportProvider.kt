@@ -28,8 +28,8 @@ private class FooLspServerDescriptor(project: Project) : ProjectWideLspServerDes
     override fun createCommandLine(): GeneralCommandLine {
         val path = System.getenv("PATH")
         println("Current PATH: $path")
-//        return GeneralCommandLine("tsx.cmd", "E:/qkyproject/ovsall/ovs-language-server/src/index.ts", "--stdio")
-        return GeneralCommandLine("tsx", "/Users/qinky/WebstormProjects/subhutiall/ovs-lsp/src/index.ts", "--stdio")
+        return GeneralCommandLine("tsx.cmd", "E:/qkyproject/subhutiall/ovs-language-server/src/index.ts", "--stdio")
+//        return GeneralCommandLine("tsx", "/Users/qinky/WebstormProjects/subhutiall/ovs-lsp/src/index.ts", "--stdio")
 //        return GeneralCommandLine("tsx.cmd", "D:/project/qkyproject/ovs-lsp/src/index.ts", "--stdio")
             .apply {
                 withCharset(Charsets.UTF_8)
@@ -40,59 +40,25 @@ private class FooLspServerDescriptor(project: Project) : ProjectWideLspServerDes
 
     // 提供语义标记支持实例
     override val lspSemanticTokensSupport: LspSemanticTokensSupport = object : LspSemanticTokensSupport() {
-        override val tokenTypes = listOf(
-            "KEYWORD",
-            "IDENTIFIER",
-        )
-
-        override val tokenModifiers = listOf<String>()
-
         override fun getTextAttributesKey(
             tokenType: String,
             modifiers: List<String>
-        ): TextAttributesKey {
-
-            val getCurrentScheme = EditorColorsManager.getInstance().globalScheme
-
-            val colors = getCurrentScheme.getAttributes(DefaultLanguageHighlighterColors.KEYWORD)
-
-            println(colors)
-
-            val res = when (tokenType) {
-                "KEYWORD" -> DefaultLanguageHighlighterColors.KEYWORD
-                "IDENTIFIER" -> DefaultLanguageHighlighterColors.IDENTIFIER
-                else -> DefaultLanguageHighlighterColors.KEYWORD
+        ): TextAttributesKey? {
+            println(tokenType)
+            try {
+                // 获取 public static 字段
+                val field = DefaultLanguageHighlighterColors::class.java.getField(tokenType)
+                // 获取字段的值，静态字段的实例为 null
+                return field.get(null) as? TextAttributesKey
+            } catch (e: NoSuchFieldException) {
+                println("字段未找到: $tokenType")
+                return null
+            } catch (e: IllegalAccessException) {
+                println("无法访问字段: $tokenType")
+                return null
             }
-            println("触发了tokentype:$tokenType")
-            return res
-
-            /*return TextAttributesKey.createTextAttributesKey(
-                "CUSTOM.GREEN_TOKEN",  // 唯一的键名
-                TextAttributes().apply {
-                    val ab = 123
-                    println(ab)
-                    foregroundColor = Color.red
-                    fontType = Font.BOLD
-                }
-            )*/
         }
     }
-
-    /*override fun isSupportedFile(file: VirtualFile) = file.extension == "simple"
-
-    override fun createCommandLine(): GeneralCommandLine {
-        return GeneralCommandLine("tsx", getServerPath())
-            .apply {
-                withCharset(Charsets.UTF_8)
-                withRedirectErrorStream(true)
-                addParameter("--stdio")
-            }
-    }
-
-    private fun getServerPath(): String {
-        // 使用编译后的 JavaScript 文件而不是 TypeScript 文件
-        return "/Users/qinky/webstormspro/ovs-lsp/src/index.ts"
-    }*/
 }
 
 

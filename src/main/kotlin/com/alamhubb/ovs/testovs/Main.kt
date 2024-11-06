@@ -1,9 +1,7 @@
-object ParentObject {
-    var name = "ParentObject"
-    fun echoName() = "name:${name}"
-}
+import com.intellij.openapi.editor.DefaultLanguageHighlighterColors
 
-// 使用
 fun main() {
-    println(ParentObject.echoName())     // 输出: ParentObject
+    val name = "IDENTIFIER"
+    println(DefaultLanguageHighlighterColors::class.java.getField(name))
+    // 因为是 public static final 字段，使用 getField
 }
