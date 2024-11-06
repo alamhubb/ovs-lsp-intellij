@@ -40,31 +40,13 @@ private class FooLspServerDescriptor(project: Project) : ProjectWideLspServerDes
 
     // 提供语义标记支持实例
     override val lspSemanticTokensSupport: LspSemanticTokensSupport = object : LspSemanticTokensSupport() {
-        override val tokenTypes = listOf(
-            "KEYWORD",
-            "IDENTIFIER",
-        )
-
-        override val tokenModifiers = listOf<String>()
-
         override fun getTextAttributesKey(
             tokenType: String,
             modifiers: List<String>
         ): TextAttributesKey {
-
-            val getCurrentScheme = EditorColorsManager.getInstance().globalScheme
-
-            val colors = getCurrentScheme.getAttributes(DefaultLanguageHighlighterColors.KEYWORD)
-
-            println(colors)
-
-            val res = when (tokenType) {
-                "KEYWORD" -> DefaultLanguageHighlighterColors.KEYWORD
-                "IDENTIFIER" -> DefaultLanguageHighlighterColors.IDENTIFIER
-                else -> DefaultLanguageHighlighterColors.KEYWORD
-            }
-            println("触发了tokentype:$tokenType")
-            return res
+            println(tokenType)
+//            return DefaultLanguageHighlighterColors::class.java.getField(tokenType) as TextAttributesKey
+            return DefaultLanguageHighlighterColors.IDENTIFIER
 
             /*return TextAttributesKey.createTextAttributesKey(
                 "CUSTOM.GREEN_TOKEN",  // 唯一的键名
