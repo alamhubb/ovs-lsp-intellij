@@ -3,24 +3,24 @@ package com.alamhubb.ovs.testovs
 import com.intellij.openapi.fileTypes.LanguageFileType
 import javax.swing.Icon
 
-class SimpleFileType private constructor() : LanguageFileType(SimpleLanguage.INSTANCE) {
+class OvsFileType private constructor() : LanguageFileType(OvsLanguage.INSTANCE) {
     override fun getName(): String {
-        return "Simple File"
+        return "Ovs File"
     }
 
     override fun getDescription(): String {
-        return "Simple language file"
+        return "Ovs language file"
     }
 
     override fun getDefaultExtension(): String {
-        return "simple"
+        return "ovs"
     }
 
     override fun getIcon(): Icon {
-        return SimpleIcons.FILE
+        return OvsIcons.FILE
     }
 
     companion object {
-        val INSTANCE: SimpleFileType = SimpleFileType()
+        val INSTANCE: OvsFileType = OvsFileType()
     }
 }

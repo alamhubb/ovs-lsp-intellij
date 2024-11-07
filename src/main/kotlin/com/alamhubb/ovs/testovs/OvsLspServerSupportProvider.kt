@@ -16,15 +16,15 @@ import java.awt.Font
 
 class OvsLspServerSupportProvider : LspServerSupportProvider {
     override fun fileOpened(project: Project, file: VirtualFile, serverStarter: LspServerStarter) {
-        if (file.extension == "simple") {
+        if (file.extension == "ovs") {
             println("chufale jinru simplle")
             serverStarter.ensureServerStarted(FooLspServerDescriptor(project))
         }
     }
 }
 
-private class FooLspServerDescriptor(project: Project) : ProjectWideLspServerDescriptor(project, "Simple") {
-    override fun isSupportedFile(file: VirtualFile) = file.extension == "simple"
+private class FooLspServerDescriptor(project: Project) : ProjectWideLspServerDescriptor(project, "Ovs") {
+    override fun isSupportedFile(file: VirtualFile) = file.extension == "ovs"
     override fun createCommandLine(): GeneralCommandLine {
         val path = System.getenv("PATH")
         println("Current PATH: $path")

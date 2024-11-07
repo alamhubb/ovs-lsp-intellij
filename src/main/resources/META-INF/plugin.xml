@@ -24,11 +24,11 @@
          Read more: https://plugins.jetbrains.com/docs/intellij/plugin-extension-points.html -->
     <extensions defaultExtensionNs="com.intellij">
         <fileType
-                name="Simple File"
-                implementationClass="com.alamhubb.ovs.testovs.SimpleFileType"
+                name="Ovs File"
+                implementationClass="com.alamhubb.ovs.testovs.OvsFileType"
                 fieldName="INSTANCE"
-                language="Simple"
-                extensions="simple"/>
+                language="Ovs"
+                extensions="ovs"/>
 
         <platform.lsp.serverSupportProvider implementation="com.alamhubb.ovs.testovs.OvsLspServerSupportProvider"/>
     </extensions>
