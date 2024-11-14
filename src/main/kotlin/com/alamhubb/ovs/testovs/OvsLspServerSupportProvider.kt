@@ -57,18 +57,51 @@ private class FooLspServerDescriptor(project: Project) : LspServerDescriptor(pro
             tokenType: String,
             modifiers: List<String>
         ): TextAttributesKey? {
-            println(tokenType)
-            try {
-                // 获取 public static 字段
-                val field = DefaultLanguageHighlighterColors::class.java.getField(tokenType)
-                // 获取字段的值，静态字段的实例为 null
-                return field.get(null) as? TextAttributesKey
-            } catch (e: NoSuchFieldException) {
-                println("字段未找到: $tokenType")
-                return null
-            } catch (e: IllegalAccessException) {
-                println("无法访问字段: $tokenType")
-                return null
+            return when (tokenType) {
+                // 命名空间
+                "namespace" -> DefaultLanguageHighlighterColors.CLASS_NAME
+
+                // 类型相关
+                "class" -> DefaultLanguageHighlighterColors.CLASS_NAME
+                "interface" -> DefaultLanguageHighlighterColors.INTERFACE_NAME
+                "enum" -> DefaultLanguageHighlighterColors.CLASS_NAME
+                "typeParameter" -> DefaultLanguageHighlighterColors.CLASS_NAME
+                "type" -> DefaultLanguageHighlighterColors.CLASS_REFERENCE
+
+                // 变量相关
+                "variable" -> when {
+                    modifiers.contains("readonly") -> DefaultLanguageHighlighterColors.CONSTANT
+                    modifiers.contains("static") -> DefaultLanguageHighlighterColors.STATIC_FIELD
+                    else -> DefaultLanguageHighlighterColors.LOCAL_VARIABLE
+                }
+
+                // 参数
+                "parameter" -> when {
+                    modifiers.contains("readonly") -> DefaultLanguageHighlighterColors.PARAMETER
+                    else -> DefaultLanguageHighlighterColors.REASSIGNED_PARAMETER
+                }
+
+                // 属性
+                "property" -> when {
+                    modifiers.contains("static") -> DefaultLanguageHighlighterColors.STATIC_FIELD
+                    else -> DefaultLanguageHighlighterColors.INSTANCE_FIELD
+                }
+
+                // 枚举成员
+                "enumMember" -> DefaultLanguageHighlighterColors.CONSTANT
+
+                // 函数相关
+                "function" -> when {
+                    modifiers.contains("declaration") -> DefaultLanguageHighlighterColors.FUNCTION_DECLARATION
+                    else -> DefaultLanguageHighlighterColors.FUNCTION_CALL
+                }
+
+                "method" -> when {
+                    modifiers.contains("static") -> DefaultLanguageHighlighterColors.STATIC_METHOD
+                    else -> DefaultLanguageHighlighterColors.INSTANCE_METHOD
+                }
+
+                else -> null
             }
         }
     }
