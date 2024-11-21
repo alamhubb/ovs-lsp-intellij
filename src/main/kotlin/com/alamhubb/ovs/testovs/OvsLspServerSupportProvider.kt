@@ -43,7 +43,11 @@ private class FooLspServerDescriptor(project: Project) : LspServerDescriptor(pro
 //        return GeneralCommandLine("tsx.cmd", "D:/project/subhutiall/ovs-lsp/src/index.ts", "--stdio")
         return GeneralCommandLine(
             "tsx.cmd",
-            "E:/qkyproject/ovsall/ovs-starter/packages/language-server/src/index.ts",
+//            "E:/qkyproject/ovsall/ovs-starter/packages/language-server/src/index.ts",
+//            "E:/qkyproject/subhutiall/ovs-language-server/src/index.ts",
+//            "E:/qkyproject/openproject/volarpull/volar-starter/packages/language-server/src/index.ts",
+            "E:/qkyproject/openproject/test-volar/langServer/src/index.ts",
+//            "E:/qkyproject/openproject/volar.js/langServer/src/index.ts",
             "--stdio"
         )
 //        return GeneralCommandLine("tsx.cmd", "E:/qkyproject/subhutiall/ovs-language-server/src/index.ts", "--stdio")
