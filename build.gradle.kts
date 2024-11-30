@@ -13,6 +13,14 @@ repositories {
     maven {
         url = uri("https://maven.aliyun.com/repository/public")
     }
+    maven {
+        url = uri("https://mirrors.huaweicloud.com/repository/maven")
+    }
+    maven {
+        url = uri("https://www.jetbrains.com/intellij-repository/releases")
+        isAllowInsecureProtocol = true
+    }
+
     /*maven {
         url = uri("https://packages.jetbrains.team/maven/p/grazi/grazie-platform-public")
     }
@@ -33,8 +41,20 @@ repositories {
 allprojects {
     repositories {
         maven {
+            url = uri("https://maven.aliyun.com/repository/gradle-plugin")
+        }
+        maven {
             url = uri("https://maven.aliyun.com/repository/public")
         }
+        maven {
+            url = uri("https://mirrors.huaweicloud.com/repository/maven")
+        }
+        maven {
+            url = uri("https://www.jetbrains.com/intellij-repository/releases")
+            isAllowInsecureProtocol = true
+        }
+        gradlePluginPortal()
+        mavenCentral()
     }
 }
 
