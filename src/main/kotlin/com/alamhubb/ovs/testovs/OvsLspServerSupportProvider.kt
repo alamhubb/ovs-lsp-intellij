@@ -48,7 +48,8 @@ private class FooLspServerDescriptor(project: Project) : LspServerDescriptor(pro
 //            "E:/qkyproject/openproject/volarpull/volar-starter/packages/language-server/src/index.ts",
 //            "E:/qkyproject/openproject/volar.js/langServer/src/index.ts",
 //            "D:/project/qkyproject/test-volar/langServer/src/index.ts",
-            "E:/qkyproject/openproject/test-volar/langServer/src/index.ts",
+            "D:/project/qkyproject/test-volar/langServer/src/ovsserver.ts",
+//            "E:/qkyproject/openproject/test-volar/langServer/src/index.ts",
 //            "E:/qkyproject/openproject/volarpull/volar-html-start/packages/language-server/src/index.ts",
             "--stdio"
         )
