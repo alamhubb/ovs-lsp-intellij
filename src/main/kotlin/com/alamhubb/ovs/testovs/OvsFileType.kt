@@ -3,24 +3,12 @@ package com.alamhubb.ovs.testovs
 import com.intellij.openapi.fileTypes.LanguageFileType
 import javax.swing.Icon
 
-class OvsFileType private constructor() : LanguageFileType(OvsLanguage.INSTANCE) {
-    override fun getName(): String {
-        return "Ovs File"
-    }
+object OvsFileType : LanguageFileType(OvsLanguage.INSTANCE) {
+    override fun getName(): String = "Ovs File"
 
-    override fun getDescription(): String {
-        return "Ovs language file"
-    }
+    override fun getDescription(): String = "Ovs language file"
 
-    override fun getDefaultExtension(): String {
-        return "ovs"
-    }
+    override fun getDefaultExtension(): String = "ovs"
 
-    override fun getIcon(): Icon {
-        return OvsIcons.FILE
-    }
-
-    companion object {
-        val INSTANCE: OvsFileType = OvsFileType()
-    }
+    override fun getIcon(): Icon = OvsIcons.FILE
 }

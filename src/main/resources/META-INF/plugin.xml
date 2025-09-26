@@ -32,10 +32,14 @@
 
         <platform.lsp.serverSupportProvider implementation="com.alamhubb.ovs.testovs.OvsLspServerSupportProvider"/>
 
+        <typedHandler implementation="com.alamhubb.ovs.testovs.OvsTypedHandler"/>
 
-        <completion.contributor
+        <lang.parserDefinition
                 language="ovs"
-                implementationClass="com.alamhubb.ovs.testovs.OvsCompletionContributor"/>
+                implementationClass="com.alamhubb.ovs.testovs.OvsParserDefinition"/>
+   <!--     <completion.contributor
+                language="ovs"
+                implementationClass="com.alamhubb.ovs.testovs.OvsCompletionContributor"/>-->
     </extensions>
     <depends>com.intellij.modules.ultimate</depends>
 </idea-plugin>
