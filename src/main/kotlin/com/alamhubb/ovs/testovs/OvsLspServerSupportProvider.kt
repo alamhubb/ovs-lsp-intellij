@@ -11,7 +11,10 @@ import com.intellij.platform.lsp.api.LspServerDescriptor
 import com.intellij.platform.lsp.api.LspServerSupportProvider
 import com.intellij.platform.lsp.api.LspServerSupportProvider.LspServerStarter
 import com.intellij.platform.lsp.api.ProjectWideLspServerDescriptor
+import com.intellij.platform.lsp.api.customization.LspCompletionCustomizer
 import com.intellij.platform.lsp.api.customization.LspCompletionSupport
+import com.intellij.platform.lsp.api.customization.LspCustomization
+import com.intellij.platform.lsp.api.customization.LspSemanticTokensCustomizer
 import com.intellij.platform.lsp.api.customization.LspSemanticTokensSupport
 import org.eclipse.lsp4j.CompletionItem
 import java.awt.Color
@@ -27,77 +30,76 @@ class OvsLspServerSupportProvider : LspServerSupportProvider {
 }
 
 private class FooLspServerDescriptor(project: Project) : LspServerDescriptor(project, "Ovs") {
+    // 每次输入任意字符都触发补全请求
+    override val lspCustomization: LspCustomization =
+        object : LspCustomization() {
+            override val completionCustomizer: LspCompletionCustomizer =
+                object : LspCompletionSupport() {
+                    override fun isTriggerCharacterRespected(charTyped: Char): Boolean {
+                        println("LSP[client]: isTriggerCharacterRespected char='$charTyped'")
+                        return true
+                    }
 
-    override val lspCompletionSupport: LspCompletionSupport?
-        get() = object : LspCompletionSupport() {
-            // 你可以在此处定义该属性的自定义实现
-            // 重写 getTailText 方法
-            override fun getTailText(item: CompletionItem): String? = item.labelDetails?.detail
+                    override fun shouldRunCodeCompletion(parameters: com.intellij.codeInsight.completion.CompletionParameters): Boolean {
+                        val vf = parameters.originalFile.virtualFile
+                        println("LSP[client]: shouldRunCodeCompletion file=${vf?.path} offset=${parameters.offset}")
+                        return true
+                    }
 
+                    override fun getCompletionPrefix(
+                        parameters: com.intellij.codeInsight.completion.CompletionParameters,
+                        defaultPrefix: String
+                    ): String {
+                        println("LSP[client]: getCompletionPrefix default='$defaultPrefix'")
+                        return defaultPrefix
+                    }
+                }
         }
 
     override fun isSupportedFile(file: VirtualFile) = file.extension == "ovs"
     override fun createCommandLine(): GeneralCommandLine {
         val path = System.getenv("PATH")
         println("Current PATH: $path")
-//        return GeneralCommandLine("tsx.cmd", "D:/project/subhutiall/ovs-lsp/src/index.ts", "--stdio")
         return GeneralCommandLine(
             "tsx.cmd",
-//            "E:/qkyproject/ovsall/ovs-starter/packages/language-server/src/index.ts",
-//            "E:/qkyproject/subhutiall/ovs-language-server/src/index.ts",
-//            "E:/qkyproject/openproject/volarpull/volar-starter/packages/language-server/src/index.ts",
-//            "E:/qkyproject/openproject/volar.js/langServer/src/index.ts",
-//            "D:/project/qkyproject/test-volar/langServer/src/index.ts",
             "D:/project/qkyproject/test-volar/langServer/src/ovsserver.ts",
-//            "E:/qkyproject/openproject/test-volar/langServer/src/index.ts",
-//            "E:/qkyproject/openproject/volarpull/volar-html-start/packages/language-server/src/index.ts",
             "--stdio"
         )
-//        return GeneralCommandLine("tsx.cmd", "E:/qkyproject/subhutiall/ovs-language-server/src/index.ts", "--stdio")
-//        return GeneralCommandLine("tsx", "/Users/qinky/WebstormProjects/subhutiall/ovs-lsp/src/index.ts", "--stdio")
-//        return GeneralCommandLine("node", "console.log(123)", "ovs-lsp", "echo", "--stdio")
     }
 
-    // 提供语义标记支持实例
+    // 语义高亮映射
     override val lspSemanticTokensSupport: LspSemanticTokensSupport = object : LspSemanticTokensSupport() {
         override fun getTextAttributesKey(
             tokenType: String,
             modifiers: List<String>
         ): TextAttributesKey? {
             return when (tokenType) {
-                // 命名空间
                 "namespace" -> DefaultLanguageHighlighterColors.CLASS_NAME
 
-                // 类型相关
                 "class" -> DefaultLanguageHighlighterColors.CLASS_NAME
                 "interface" -> DefaultLanguageHighlighterColors.INTERFACE_NAME
                 "enum" -> DefaultLanguageHighlighterColors.CLASS_NAME
                 "typeParameter" -> DefaultLanguageHighlighterColors.CLASS_NAME
                 "type" -> DefaultLanguageHighlighterColors.CLASS_REFERENCE
 
-                // 变量相关
                 "variable" -> when {
                     modifiers.contains("readonly") -> DefaultLanguageHighlighterColors.CONSTANT
                     modifiers.contains("static") -> DefaultLanguageHighlighterColors.STATIC_FIELD
                     else -> DefaultLanguageHighlighterColors.LOCAL_VARIABLE
                 }
 
-                // 参数
                 "parameter" -> when {
                     modifiers.contains("readonly") -> DefaultLanguageHighlighterColors.PARAMETER
                     else -> DefaultLanguageHighlighterColors.REASSIGNED_PARAMETER
                 }
 
-                // 属性
                 "property" -> when {
                     modifiers.contains("static") -> DefaultLanguageHighlighterColors.STATIC_FIELD
                     else -> DefaultLanguageHighlighterColors.INSTANCE_FIELD
                 }
 
-                // 枚举成员
                 "enumMember" -> DefaultLanguageHighlighterColors.CONSTANT
 
-                // 函数相关
                 "function" -> when {
                     modifiers.contains("declaration") -> DefaultLanguageHighlighterColors.FUNCTION_DECLARATION
                     else -> DefaultLanguageHighlighterColors.FUNCTION_CALL
@@ -113,5 +115,3 @@ private class FooLspServerDescriptor(project: Project) : LspServerDescriptor(pro
         }
     }
 }
-
-

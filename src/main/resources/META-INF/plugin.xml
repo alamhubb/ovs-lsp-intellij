@@ -27,10 +27,15 @@
                 name="Ovs File"
                 implementationClass="com.alamhubb.ovs.testovs.OvsFileType"
                 fieldName="INSTANCE"
-                language="Ovs"
+                language="ovs"
                 extensions="ovs"/>
 
         <platform.lsp.serverSupportProvider implementation="com.alamhubb.ovs.testovs.OvsLspServerSupportProvider"/>
+
+
+        <completion.contributor
+                language="ovs"
+                implementationClass="com.alamhubb.ovs.testovs.OvsCompletionContributor"/>
     </extensions>
     <depends>com.intellij.modules.ultimate</depends>
 </idea-plugin>
