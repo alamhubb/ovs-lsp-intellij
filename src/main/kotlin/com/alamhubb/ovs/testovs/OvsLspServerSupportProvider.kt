@@ -1,6 +1,7 @@
 package com.alamhubb.ovs.testovs
 
 import com.intellij.execution.configurations.GeneralCommandLine
+import com.intellij.lang.typescript.lsp.BaseLspTypeScriptServiceCompletionSupport
 import com.intellij.openapi.editor.DefaultLanguageHighlighterColors
 import com.intellij.openapi.editor.colors.EditorColorsManager
 import com.intellij.openapi.editor.colors.TextAttributesKey
@@ -12,6 +13,7 @@ import com.intellij.platform.lsp.api.LspServerSupportProvider
 import com.intellij.platform.lsp.api.LspServerSupportProvider.LspServerStarter
 import com.intellij.platform.lsp.api.ProjectWideLspServerDescriptor
 import com.intellij.platform.lsp.api.customization.LspCompletionCustomizer
+import com.intellij.platform.lsp.api.customization.LspCompletionDisabled
 import com.intellij.platform.lsp.api.customization.LspCompletionSupport
 import com.intellij.platform.lsp.api.customization.LspCustomization
 import com.intellij.platform.lsp.api.customization.LspSemanticTokensCustomizer
@@ -33,7 +35,8 @@ private class FooLspServerDescriptor(project: Project) : LspServerDescriptor(pro
     // 每次输入任意字符都触发补全请求
     override val lspCustomization: LspCustomization =
         object : LspCustomization() {
-            override val completionCustomizer: LspCompletionCustomizer =
+            override val completionCustomizer: LspCompletionCustomizer = BaseLspTypeScriptServiceCompletionSupport()
+            /*override val completionCustomizer: LspCompletionCustomizer =
                 object : LspCompletionSupport() {
                     override fun isTriggerCharacterRespected(charTyped: Char): Boolean {
                         println("LSP[client]: isTriggerCharacterRespected char='$charTyped'")
@@ -53,7 +56,7 @@ private class FooLspServerDescriptor(project: Project) : LspServerDescriptor(pro
                         println("LSP[client]: getCompletionPrefix default='$defaultPrefix'")
                         return defaultPrefix
                     }
-                }
+                }*/
         }
 
     override fun isSupportedFile(file: VirtualFile) = file.extension == "ovs"

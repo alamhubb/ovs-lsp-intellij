@@ -23,6 +23,7 @@ dependencies {
 
     intellijPlatform {
         intellijIdeaUltimate("2025.2.1")
+        bundledPlugins("JavaScript")
     }
 }
 

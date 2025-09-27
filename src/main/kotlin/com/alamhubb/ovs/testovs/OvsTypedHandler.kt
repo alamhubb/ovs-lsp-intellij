@@ -12,7 +12,7 @@ class OvsTypedHandler : TypedHandlerDelegate() {
         println("触发了:$c")
         if (!(c in 'a'..'z' || c in 'A'..'Z')) return Result.CONTINUE
         println("触发了1111：$c")
-        CompletionTrigger.trigger(project, editor)
+//        CompletionTrigger.trigger(project, editor)
         return Result.CONTINUE
     }
 }
