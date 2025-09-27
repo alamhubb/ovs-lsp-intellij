@@ -19,16 +19,10 @@ object CompletionTrigger {
     fun trigger(project: Project, editor: Editor) {
         val future = executor.schedule({
             ApplicationManager.getApplication().invokeLater({
-                // 等效 Ctrl+Space，LSP triggerKind = 1（Invoked）
+                // 如需智能补全（等效 Ctrl+Shift+Space）
                 CodeCompletionHandlerBase(CompletionType.BASIC).invokeCompletion(project, editor)
             }, ModalityState.any())
         }, delayMs, TimeUnit.MILLISECONDS)
         pendingTasks[editor] = future
-        println("Triggering completion")
-        ApplicationManager.getApplication().invokeLater(Runnable {
-            println("Triggering completion123123")
-            if (project.isDisposed || editor.isDisposed) return@Runnable
-            CodeCompletionHandlerBase(CompletionType.BASIC).invokeCompletion(project, editor)
-        })
     }
 }

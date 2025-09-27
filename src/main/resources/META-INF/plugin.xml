@@ -32,7 +32,7 @@
 
         <platform.lsp.serverSupportProvider implementation="com.alamhubb.ovs.testovs.OvsLspServerSupportProvider"/>
 
-        <typedHandler implementation="com.alamhubb.ovs.testovs.OvsTypedHandler"/>
+<!--        <typedHandler implementation="com.alamhubb.ovs.testovs.OvsTypedHandler"/>-->
 
         <lang.parserDefinition
                 language="ovs"
