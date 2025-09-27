@@ -63,15 +63,18 @@ private class FooLspServerDescriptor(project: Project) : LspServerDescriptor(pro
     override fun createCommandLine(): GeneralCommandLine {
         val path = System.getenv("PATH")
         println("Current PATH: $path")
-        return GeneralCommandLine(
+        val cmd = GeneralCommandLine(
             "tsx.cmd",
             "D:/project/qkyproject/test-volar/langServer/src/ovsserver.ts",
             "--stdio"
         )
+//        cmd.charset = Charsets.UTF_8
+//        cmd.withEnvironment(mapOf("LANG" to "en_US.UTF-8", "LC_ALL" to "en_US.UTF-8"))
+        return cmd
     }
 
     // 语义高亮映射
-    override val lspSemanticTokensSupport: LspSemanticTokensSupport = object : LspSemanticTokensSupport() {
+    /*override val lspSemanticTokensSupport: LspSemanticTokensSupport = object : LspSemanticTokensSupport() {
         override fun getTextAttributesKey(
             tokenType: String,
             modifiers: List<String>
@@ -116,5 +119,5 @@ private class FooLspServerDescriptor(project: Project) : LspServerDescriptor(pro
                 else -> null
             }
         }
-    }
+    }*/
 }
