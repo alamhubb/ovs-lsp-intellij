@@ -35,8 +35,8 @@ private class FooLspServerDescriptor(project: Project) : LspServerDescriptor(pro
     // 每次输入任意字符都触发补全请求
     override val lspCustomization: LspCustomization =
         object : LspCustomization() {
-            override val completionCustomizer: LspCompletionCustomizer = BaseLspTypeScriptServiceCompletionSupport()
-            /*override val completionCustomizer: LspCompletionCustomizer =
+            //            override val completionCustomizer: LspCompletionCustomizer = BaseLspTypeScriptServiceCompletionSupport()
+            override val completionCustomizer: LspCompletionCustomizer =
                 object : LspCompletionSupport() {
                     override fun isTriggerCharacterRespected(charTyped: Char): Boolean {
                         println("LSP[client]: isTriggerCharacterRespected char='$charTyped'")
@@ -56,7 +56,7 @@ private class FooLspServerDescriptor(project: Project) : LspServerDescriptor(pro
                         println("LSP[client]: getCompletionPrefix default='$defaultPrefix'")
                         return defaultPrefix
                     }
-                }*/
+                }
         }
 
     override fun isSupportedFile(file: VirtualFile) = file.extension == "ovs"
