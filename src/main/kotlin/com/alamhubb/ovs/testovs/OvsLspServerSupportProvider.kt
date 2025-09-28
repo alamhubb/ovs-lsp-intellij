@@ -1,26 +1,18 @@
 package com.alamhubb.ovs.testovs
 
+import com.intellij.codeInsight.completion.CompletionData
+import com.intellij.codeInsight.completion.CompletionParameters
+import com.intellij.codeInsight.completion.CompletionService
 import com.intellij.execution.configurations.GeneralCommandLine
-import com.intellij.lang.typescript.lsp.BaseLspTypeScriptServiceCompletionSupport
-import com.intellij.openapi.editor.DefaultLanguageHighlighterColors
-import com.intellij.openapi.editor.colors.EditorColorsManager
-import com.intellij.openapi.editor.colors.TextAttributesKey
-import com.intellij.openapi.editor.markup.TextAttributes
+import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.platform.lsp.api.LspServerDescriptor
 import com.intellij.platform.lsp.api.LspServerSupportProvider
 import com.intellij.platform.lsp.api.LspServerSupportProvider.LspServerStarter
-import com.intellij.platform.lsp.api.ProjectWideLspServerDescriptor
 import com.intellij.platform.lsp.api.customization.LspCompletionCustomizer
-import com.intellij.platform.lsp.api.customization.LspCompletionDisabled
 import com.intellij.platform.lsp.api.customization.LspCompletionSupport
 import com.intellij.platform.lsp.api.customization.LspCustomization
-import com.intellij.platform.lsp.api.customization.LspSemanticTokensCustomizer
-import com.intellij.platform.lsp.api.customization.LspSemanticTokensSupport
-import org.eclipse.lsp4j.CompletionItem
-import java.awt.Color
-import java.awt.Font
 
 class OvsLspServerSupportProvider : LspServerSupportProvider {
     override fun fileOpened(project: Project, file: VirtualFile, serverStarter: LspServerStarter) {
@@ -31,7 +23,16 @@ class OvsLspServerSupportProvider : LspServerSupportProvider {
     }
 }
 
+
 private class FooLspServerDescriptor(project: Project) : LspServerDescriptor(project, "Ovs") {
+    fun suggestPrefix(parameters: CompletionParameters): String? {
+        val position = parameters.getPosition()
+        val offset = parameters.getOffset()
+        val range = position.getTextRange()
+        assert(range.containsOffset(offset)) { position.toString() + "; " + offset + " not in " + range }
+        return CompletionData.findPrefixStatic(position, offset)
+    }
+
     // 每次输入任意字符都触发补全请求
     override val lspCustomization: LspCustomization =
         object : LspCustomization() {
@@ -44,8 +45,26 @@ private class FooLspServerDescriptor(project: Project) : LspServerDescriptor(pro
                     }
 
                     override fun shouldRunCodeCompletion(parameters: com.intellij.codeInsight.completion.CompletionParameters): Boolean {
+//                        val vFile = parameters.originalFile.virtualFile
+//                        val doc = parameters.editor.document
+//                        val offset = parameters.offset
+//
+//                        // 仅对 .ovs 生效（可选）
+//                        if (vFile?.extension != "ovs") return true
+//
+//                        if (offset > 0 && offset <= doc.textLength) {
+//                            val ch = doc.charsSequence[offset - 1]
+//                            if (ch.isDigit()) return false  // 数字则不发起补全
+//                        }
+
+                        val prefix: String = suggestPrefix(parameters)!!
+                        if ("" === prefix){
+                            // 前缀非空则不发起补全
+                            return false
+                        }
                         val vf = parameters.originalFile.virtualFile
                         println("LSP[client]: shouldRunCodeCompletion file=${vf?.path} offset=${parameters.offset}")
+//                        throw RuntimeException("test exception")
                         return true
                     }
 
