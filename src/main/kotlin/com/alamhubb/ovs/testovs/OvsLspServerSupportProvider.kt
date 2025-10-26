@@ -13,12 +13,24 @@ import com.intellij.platform.lsp.api.LspServerSupportProvider.LspServerStarter
 import com.intellij.platform.lsp.api.customization.LspCompletionCustomizer
 import com.intellij.platform.lsp.api.customization.LspCompletionSupport
 import com.intellij.platform.lsp.api.customization.LspCustomization
+import com.intellij.platform.lsp.api.customization.LspSemanticTokensSupport
+import com.intellij.openapi.editor.DefaultLanguageHighlighterColors
+import com.intellij.openapi.editor.colors.TextAttributesKey
+import com.intellij.platform.lsp.api.customization.LspSemanticTokensCustomizer
 
 class OvsLspServerSupportProvider : LspServerSupportProvider {
     override fun fileOpened(project: Project, file: VirtualFile, serverStarter: LspServerStarter) {
+        println("=== LSP FileOpened Event ===")
+        println("File: ${file.name}")
+        println("Extension: ${file.extension}")
+        println("Path: ${file.path}")
+        
         if (file.extension == "ovs") {
-            println("chufale jinru simplle")
+            println("✅ Starting LSP server for OVS file")
             serverStarter.ensureServerStarted(FooLspServerDescriptor(project))
+            println("✅ LSP server start requested")
+        } else {
+            println("❌ Not an OVS file, skipping")
         }
     }
 }
@@ -58,7 +70,7 @@ private class FooLspServerDescriptor(project: Project) : LspServerDescriptor(pro
 //                        }
 
                         val prefix: String = suggestPrefix(parameters)!!
-                        if ("" === prefix){
+                        if ("" === prefix) {
                             // 前缀非空则不发起补全
                             return false
                         }
@@ -76,6 +88,87 @@ private class FooLspServerDescriptor(project: Project) : LspServerDescriptor(pro
                         return defaultPrefix
                     }
                 }
+
+            override val semanticTokensCustomizer: LspSemanticTokensCustomizer =
+                object : LspSemanticTokensSupport() {
+                    
+                    init {
+                        println("🎨🎨🎨 LspSemanticTokensSupport INITIALIZED! 🎨🎨🎨")
+                    }
+
+                    // ✅ 只使用服务端支持的 tokenTypes（12个）
+                    override val tokenTypes = listOf(
+                        "namespace",
+                        "class",
+                        "enum",
+                        "interface",
+                        "typeParameter",
+                        "type",
+                        "parameter",
+                        "variable",
+                        "property",
+                        "enumMember",
+                        "function",
+                        "method"
+                    )
+
+                    // ✅ 只使用服务端支持的 tokenModifiers（6个）
+                    override val tokenModifiers = listOf(
+                        "declaration",
+                        "readonly",
+                        "static",
+                        "async",
+                        "defaultLibrary",
+                        "local"
+                    )
+
+                    // 3. 映射 semantic token type 到 TextAttributesKey（控制颜色和样式）
+                    override fun getTextAttributesKey(
+                        tokenType: String,
+                        modifiers: List<String>
+                    ): TextAttributesKey? {
+                        println("🔥🔥🔥 SEMANTIC TOKEN CALLED: type=$tokenType, modifiers=$modifiers 🔥🔥🔥")
+                        return when (tokenType) {
+                            "namespace" -> DefaultLanguageHighlighterColors.CLASS_NAME
+
+                            "class" -> DefaultLanguageHighlighterColors.CLASS_NAME
+                            "interface" -> DefaultLanguageHighlighterColors.INTERFACE_NAME
+                            "enum" -> DefaultLanguageHighlighterColors.CLASS_NAME
+                            "typeParameter" -> DefaultLanguageHighlighterColors.CLASS_NAME
+                            "type" -> DefaultLanguageHighlighterColors.CLASS_REFERENCE
+
+                            "variable" -> when {
+                                modifiers.contains("readonly") -> DefaultLanguageHighlighterColors.CONSTANT
+                                modifiers.contains("static") -> DefaultLanguageHighlighterColors.STATIC_FIELD
+                                else -> DefaultLanguageHighlighterColors.LOCAL_VARIABLE
+                            }
+
+                            "parameter" -> when {
+                                modifiers.contains("readonly") -> DefaultLanguageHighlighterColors.PARAMETER
+                                else -> DefaultLanguageHighlighterColors.REASSIGNED_PARAMETER
+                            }
+
+                            "property" -> when {
+                                modifiers.contains("static") -> DefaultLanguageHighlighterColors.STATIC_FIELD
+                                else -> DefaultLanguageHighlighterColors.INSTANCE_FIELD
+                            }
+
+                            "enumMember" -> DefaultLanguageHighlighterColors.CONSTANT
+
+                            "function" -> when {
+                                modifiers.contains("declaration") -> DefaultLanguageHighlighterColors.FUNCTION_DECLARATION
+                                else -> DefaultLanguageHighlighterColors.FUNCTION_CALL
+                            }
+
+                            "method" -> when {
+                                modifiers.contains("static") -> DefaultLanguageHighlighterColors.STATIC_METHOD
+                                else -> DefaultLanguageHighlighterColors.INSTANCE_METHOD
+                            }
+
+                            else -> null
+                        }
+                    }
+                }
         }
 
     override fun isSupportedFile(file: VirtualFile) = file.extension == "ovs"
@@ -84,59 +177,12 @@ private class FooLspServerDescriptor(project: Project) : LspServerDescriptor(pro
         println("Current PATH: $path")
         val cmd = GeneralCommandLine(
             "tsx.cmd",
-            "D:/project/qkyproject/test-volar/langServer/src/ovsserver.ts",
+            "D:/project/qkyproject/ovs-lsp-all/test-volar-copy/langServer/src/ovsserver.ts",
+//            "D:/project/qkyproject/test-volar/langServer/src/ovsserver.ts",
             "--stdio"
         )
 //        cmd.charset = Charsets.UTF_8
 //        cmd.withEnvironment(mapOf("LANG" to "en_US.UTF-8", "LC_ALL" to "en_US.UTF-8"))
         return cmd
     }
-
-    // 语义高亮映射
-    /*override val lspSemanticTokensSupport: LspSemanticTokensSupport = object : LspSemanticTokensSupport() {
-        override fun getTextAttributesKey(
-            tokenType: String,
-            modifiers: List<String>
-        ): TextAttributesKey? {
-            return when (tokenType) {
-                "namespace" -> DefaultLanguageHighlighterColors.CLASS_NAME
-
-                "class" -> DefaultLanguageHighlighterColors.CLASS_NAME
-                "interface" -> DefaultLanguageHighlighterColors.INTERFACE_NAME
-                "enum" -> DefaultLanguageHighlighterColors.CLASS_NAME
-                "typeParameter" -> DefaultLanguageHighlighterColors.CLASS_NAME
-                "type" -> DefaultLanguageHighlighterColors.CLASS_REFERENCE
-
-                "variable" -> when {
-                    modifiers.contains("readonly") -> DefaultLanguageHighlighterColors.CONSTANT
-                    modifiers.contains("static") -> DefaultLanguageHighlighterColors.STATIC_FIELD
-                    else -> DefaultLanguageHighlighterColors.LOCAL_VARIABLE
-                }
-
-                "parameter" -> when {
-                    modifiers.contains("readonly") -> DefaultLanguageHighlighterColors.PARAMETER
-                    else -> DefaultLanguageHighlighterColors.REASSIGNED_PARAMETER
-                }
-
-                "property" -> when {
-                    modifiers.contains("static") -> DefaultLanguageHighlighterColors.STATIC_FIELD
-                    else -> DefaultLanguageHighlighterColors.INSTANCE_FIELD
-                }
-
-                "enumMember" -> DefaultLanguageHighlighterColors.CONSTANT
-
-                "function" -> when {
-                    modifiers.contains("declaration") -> DefaultLanguageHighlighterColors.FUNCTION_DECLARATION
-                    else -> DefaultLanguageHighlighterColors.FUNCTION_CALL
-                }
-
-                "method" -> when {
-                    modifiers.contains("static") -> DefaultLanguageHighlighterColors.STATIC_METHOD
-                    else -> DefaultLanguageHighlighterColors.INSTANCE_METHOD
-                }
-
-                else -> null
-            }
-        }
-    }*/
 }

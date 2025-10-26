@@ -27,6 +27,10 @@ dependencies {
     }
 }
 
+intellijPlatform {
+    buildSearchableOptions = false
+}
+
 tasks.test {
     useJUnitPlatform()
 }

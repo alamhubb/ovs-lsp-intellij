@@ -19,6 +19,7 @@
     <!-- Product and plugin compatibility requirements.
          Read more: https://plugins.jetbrains.com/docs/intellij/plugin-compatibility.html -->
     <depends>com.intellij.modules.platform</depends>
+    <depends>com.intellij.modules.lsp</depends>
 
     <!-- Extension points defined by the plugin.
          Read more: https://plugins.jetbrains.com/docs/intellij/plugin-extension-points.html -->
@@ -36,9 +37,13 @@
         <lang.parserDefinition
                 language="ovs"
                 implementationClass="com.alamhubb.ovs.testovs.OvsParserDefinition"/>
+        
+        <!-- 语法高亮器（可选，作为后备） -->
+<!--        <lang.syntaxHighlighterFactory-->
+<!--                language="ovs"-->
+<!--                implementationClass="com.alamhubb.ovs.testovs.OvsSyntaxHighlighterFactory"/>-->
    <!--     <completion.contributor
                 language="ovs"
                 implementationClass="com.alamhubb.ovs.testovs.OvsCompletionContributor"/>-->
     </extensions>
-    <depends>com.intellij.modules.ultimate</depends>
 </idea-plugin>
