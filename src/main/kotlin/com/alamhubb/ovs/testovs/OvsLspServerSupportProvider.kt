@@ -128,7 +128,8 @@ private class FooLspServerDescriptor(project: Project) : LspServerDescriptor(pro
                         modifiers: List<String>
                     ): TextAttributesKey? {
                         println("🔥🔥🔥 SEMANTIC TOKEN CALLED: type=$tokenType, modifiers=$modifiers 🔥🔥🔥")
-                        return when (tokenType) {
+                        
+                        val result = when (tokenType) {
                             "namespace" -> DefaultLanguageHighlighterColors.CLASS_NAME
 
                             "class" -> DefaultLanguageHighlighterColors.CLASS_NAME
@@ -140,7 +141,8 @@ private class FooLspServerDescriptor(project: Project) : LspServerDescriptor(pro
                             "variable" -> when {
                                 modifiers.contains("readonly") -> DefaultLanguageHighlighterColors.CONSTANT
                                 modifiers.contains("static") -> DefaultLanguageHighlighterColors.STATIC_FIELD
-                                else -> DefaultLanguageHighlighterColors.LOCAL_VARIABLE
+                                modifiers.contains("declaration") -> DefaultLanguageHighlighterColors.GLOBAL_VARIABLE
+                                else -> DefaultLanguageHighlighterColors.KEYWORD  // 临时用关键字颜色，非常明显
                             }
 
                             "parameter" -> when {
@@ -167,6 +169,9 @@ private class FooLspServerDescriptor(project: Project) : LspServerDescriptor(pro
 
                             else -> null
                         }
+                        
+                        println("   → Returning color: $result")
+                        return result
                     }
                 }
         }

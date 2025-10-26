@@ -34,9 +34,23 @@
 
         <typedHandler implementation="com.alamhubb.ovs.testovs.OvsTypedHandler"/>
 
+        <!-- 
+        重要：不要注册 parserDefinition！
+        
+        原因：如果注册了 parserDefinition，IntelliJ 会认为这是一个"本地实现的语言"，
+        将优先使用本地的 PSI 树和语法分析，而不会向 LSP 服务器请求 semantic tokens。
+        
+        对于纯 LSP 语言（如 OVS），只需要：
+        - fileType（文件类型识别）
+        - platform.lsp.serverSupportProvider（LSP 服务器配置）
+        - typedHandler（输入辅助，可选）
+        
+        这样 IntelliJ 才会正确地使用 LSP semantic tokens 实现语义高亮。
+        
         <lang.parserDefinition
                 language="ovs"
                 implementationClass="com.alamhubb.ovs.testovs.OvsParserDefinition"/>
+        -->
         
         <!-- 语法高亮器（可选，作为后备） -->
 <!--        <lang.syntaxHighlighterFactory-->
