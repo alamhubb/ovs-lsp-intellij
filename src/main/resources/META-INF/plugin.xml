@@ -52,10 +52,10 @@
                 implementationClass="com.alamhubb.ovs.testovs.OvsParserDefinition"/>
         -->
         
-        <!-- 语法高亮器（可选，作为后备） -->
-<!--        <lang.syntaxHighlighterFactory-->
-<!--                language="ovs"-->
-<!--                implementationClass="com.alamhubb.ovs.testovs.OvsSyntaxHighlighterFactory"/>-->
+        <!-- 语法高亮器（基于 ES6 JFlex Lexer） -->
+        <lang.syntaxHighlighterFactory
+                language="ovs"
+                implementationClass="com.alamhubb.ovs.testovs.OvsSyntaxHighlighterFactory"/>
    <!--     <completion.contributor
                 language="ovs"
                 implementationClass="com.alamhubb.ovs.testovs.OvsCompletionContributor"/>-->
