@@ -60,4 +60,14 @@
                 language="ovs"
                 implementationClass="com.alamhubb.ovs.testovs.OvsCompletionContributor"/>-->
     </extensions>
+
+    <actions>
+        <action
+                id="com.example.InspectHighlightingInfoAction"
+                class="com.alamhubb.ovs.testovs.InspectHighlightingInfoAction"
+                text="Inspect Highlighting Info"
+                description="显示光标下的高亮类型和颜色">
+            <add-to-group group-id="EditorPopupMenu" anchor="last"/>
+        </action>
+    </actions>
 </idea-plugin>
