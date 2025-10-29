@@ -17,6 +17,7 @@ import com.intellij.platform.lsp.api.customization.LspSemanticTokensSupport
 import com.intellij.openapi.editor.DefaultLanguageHighlighterColors
 import com.intellij.openapi.editor.colors.TextAttributesKey
 import com.intellij.platform.lsp.api.customization.LspSemanticTokensCustomizer
+import com.intellij.lang.javascript.highlighting.JSHighlighter
 
 class OvsLspServerSupportProvider : LspServerSupportProvider {
     override fun fileOpened(project: Project, file: VirtualFile, serverStarter: LspServerStarter) {
@@ -122,7 +123,7 @@ private class FooLspServerDescriptor(project: Project) : LspServerDescriptor(pro
                         "local"
                     )
 
-                    // 3. 映射 semantic token type 到 TextAttributesKey（控制颜色和样式）
+                    // 3. 映射 semantic token type 到 TextAttributesKey（直接使用 JavaScript 的颜色配置）
                     override fun getTextAttributesKey(
                         tokenType: String,
                         modifiers: List<String>
@@ -130,47 +131,51 @@ private class FooLspServerDescriptor(project: Project) : LspServerDescriptor(pro
                         println("🔥🔥🔥 SEMANTIC TOKEN CALLED: type=$tokenType, modifiers=$modifiers 🔥🔥🔥")
                         
                         val result = when (tokenType) {
-                            "namespace" -> DefaultLanguageHighlighterColors.CLASS_NAME
+                            // ========== 类型相关 ==========
+                            "namespace" -> JSHighlighter.JS_GLOBAL_VARIABLE  // namespace 用全局变量颜色
+                            "class" -> JSHighlighter.JS_GLOBAL_FUNCTION  // class 用函数颜色（通常是黄色）
+                            "interface" -> JSHighlighter.JS_GLOBAL_FUNCTION
+                            "enum" -> JSHighlighter.JS_GLOBAL_FUNCTION
+                            "typeParameter" -> JSHighlighter.JS_PARAMETER
+                            "type" -> JSHighlighter.JS_GLOBAL_FUNCTION
 
-                            "class" -> DefaultLanguageHighlighterColors.CLASS_NAME
-                            "interface" -> DefaultLanguageHighlighterColors.INTERFACE_NAME
-                            "enum" -> DefaultLanguageHighlighterColors.CLASS_NAME
-                            "typeParameter" -> DefaultLanguageHighlighterColors.CLASS_NAME
-                            "type" -> DefaultLanguageHighlighterColors.CLASS_REFERENCE
-
+                            // ========== 变量相关（关键！）==========
                             "variable" -> when {
-                                modifiers.contains("readonly") -> DefaultLanguageHighlighterColors.CONSTANT
-                                modifiers.contains("static") -> DefaultLanguageHighlighterColors.STATIC_FIELD
-                                modifiers.contains("declaration") -> DefaultLanguageHighlighterColors.GLOBAL_VARIABLE
-                                else -> DefaultLanguageHighlighterColors.KEYWORD  // 临时用关键字颜色，非常明显
+                                modifiers.contains("readonly") -> JSHighlighter.JS_GLOBAL_VARIABLE  // const
+                                modifiers.contains("static") -> JSHighlighter.JS_STATIC_MEMBER_VARIABLE
+                                modifiers.contains("local") -> JSHighlighter.JS_LOCAL_VARIABLE  // 局部变量
+                                modifiers.contains("declaration") -> JSHighlighter.JS_GLOBAL_VARIABLE  // let/const 声明
+                                else -> JSHighlighter.JS_GLOBAL_VARIABLE  // 默认全局变量（紫色）
                             }
 
-                            "parameter" -> when {
-                                modifiers.contains("readonly") -> DefaultLanguageHighlighterColors.PARAMETER
-                                else -> DefaultLanguageHighlighterColors.REASSIGNED_PARAMETER
-                            }
+                            // ========== 参数 ==========
+                            "parameter" -> JSHighlighter.JS_PARAMETER
 
+                            // ========== 属性 ==========
                             "property" -> when {
-                                modifiers.contains("static") -> DefaultLanguageHighlighterColors.STATIC_FIELD
-                                else -> DefaultLanguageHighlighterColors.INSTANCE_FIELD
+                                modifiers.contains("static") -> JSHighlighter.JS_STATIC_MEMBER_VARIABLE
+                                else -> JSHighlighter.JS_INSTANCE_MEMBER_VARIABLE
                             }
 
-                            "enumMember" -> DefaultLanguageHighlighterColors.CONSTANT
+                            // ========== 枚举成员 ==========
+                            "enumMember" -> JSHighlighter.JS_GLOBAL_VARIABLE
 
+                            // ========== 函数相关 ==========
                             "function" -> when {
-                                modifiers.contains("declaration") -> DefaultLanguageHighlighterColors.FUNCTION_DECLARATION
-                                else -> DefaultLanguageHighlighterColors.FUNCTION_CALL
+                                modifiers.contains("declaration") -> JSHighlighter.JS_GLOBAL_FUNCTION
+                                else -> JSHighlighter.JS_GLOBAL_FUNCTION
                             }
 
+                            // ========== 方法 ==========
                             "method" -> when {
-                                modifiers.contains("static") -> DefaultLanguageHighlighterColors.STATIC_METHOD
-                                else -> DefaultLanguageHighlighterColors.INSTANCE_METHOD
+                                modifiers.contains("static") -> JSHighlighter.JS_STATIC_MEMBER_FUNCTION
+                                else -> JSHighlighter.JS_INSTANCE_MEMBER_FUNCTION
                             }
 
                             else -> null
                         }
                         
-                        println("   → Returning color: $result")
+                        println("   → Returning JS color: $result")
                         return result
                     }
                 }
